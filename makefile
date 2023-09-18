@@ -9,10 +9,14 @@ SRC += nhc_hex_file.cpp
 
 OBJ = $(patsubst %.cpp,$(BUILD_DIR)/%.o,$(SRC))
 
-LIB = usb-1.0
+ifeq ($(OS),Windows_NT)
+	LIB = -lwinusb -lsetupapi
+else
+	LIB = -lusb-1.0
+endif
 
 all: $(OBJ)
-	$(CC) $^ -L. -l$(LIB) -o $(BUILD_DIR)/$(PRJ)
+	$(CC) $^ $(LIB) -o $(BUILD_DIR)/$(PRJ)
 
 $(BUILD_DIR)/%.o: %.cpp | $(BUILD_DIR)
 	$(CC) -c $< -o $@
