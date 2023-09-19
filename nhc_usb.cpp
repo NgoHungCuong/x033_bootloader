@@ -13,11 +13,11 @@ static OVERLAPPED ov;
 uint32_t nhc_usb::open(uint32_t vid, uint32_t pid)
 {
     HANDLE hDevInfoSet;
-    GUID hidGuid = {0xdee824ef, 0x729b, 0x4a0e, 0x9c, 0x14, 0xb7, 0x11, 0x7d, 0x33, 0xa8, 0x17};
+    GUID usbGuid = {0xdee824ef, 0x729b, 0x4a0e, 0x9c, 0x14, 0xb7, 0x11, 0x7d, 0x33, 0xa8, 0x17};
 
     conn = 0;
 
-    hDevInfoSet = SetupDiGetClassDevs(&hidGuid, NULL, NULL, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
+    hDevInfoSet = SetupDiGetClassDevs(&usbGuid, NULL, NULL, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
 
     if (!hDevInfoSet)
     {
@@ -37,7 +37,7 @@ uint32_t nhc_usb::open(uint32_t vid, uint32_t pid)
 
     while (1)
     {
-        dwRes = SetupDiEnumDeviceInterfaces(hDevInfoSet, NULL, &hidGuid, dwInterfaceIndex, &devInterfaceData);
+        dwRes = SetupDiEnumDeviceInterfaces(hDevInfoSet, NULL, &usbGuid, dwInterfaceIndex, &devInterfaceData);
         if (dwRes)
         {
             dwStatus = GetLastError();
@@ -189,9 +189,9 @@ void nhc_usb::close(void)
     if (conn)
     {
         libusb_close(h);
-        libusb_exit(NULL);
         conn = 0;
     }
+    libusb_exit(NULL);
 }
 
 uint32_t nhc_usb::write(uint8_t *p_data, uint32_t len, uint8_t ep)
